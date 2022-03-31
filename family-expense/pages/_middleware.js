@@ -13,7 +13,7 @@ export async function middleware(req, ev) {
     "/logo.png",
     "/favicon.ico",
   ];
-  if (unprotectedRoutes.includes(req.url)) {
+  if (unprotectedRoutes.includes(req.url.replace(nextConfig.server, ""))) {
     return NextResponse.next();
   }
 
