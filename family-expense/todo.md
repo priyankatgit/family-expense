@@ -1,0 +1,5 @@
+- Implement soft category delete and filter out soft deleted data from category list
+    - If there are records liked with it, donot allow to remove category until all entries been deleted
+- Remove entry
+- Delete entry
+- After add entry reload chart and counters

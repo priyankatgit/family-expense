@@ -1,14 +1,12 @@
+import { DollarOutlined } from "@ant-design/icons";
 import { Avatar, List } from "antd";
 import { useEffect, useState } from "react";
-import {
-  DollarOutlined,
-} from "@ant-design/icons";
 
-export default function ListEntry() {
+export default function ListEntry({ selectedMonth }) {
   const [entries, setEntry] = useState([]);
 
   const getEntries = async () => {
-    const response = await fetch("/api/entry");
+    const response = await fetch(`/api/entry/?month=${selectedMonth}`);
     const entries = await response.json();
     if (entries.error) {
       alert(entries.error);
@@ -19,7 +17,7 @@ export default function ListEntry() {
 
   useEffect(() => {
     getEntries();
-  }, []);
+  }, [selectedMonth]);
 
   const deleteEntry = async (_id) => {
     let response = await fetch("/api/entry", {
@@ -42,7 +40,12 @@ export default function ListEntry() {
       <div>
         <div>
           <span>{item.entryCategory}</span>
-          {item.entryDetail && <span style={{fontWeight:"400", color:"#9b9b9b"}}> - {item.entryDetail}</span>}
+          {item.entryDetail && (
+            <span style={{ fontWeight: "400", color: "#9b9b9b" }}>
+              {" "}
+              - {item.entryDetail}
+            </span>
+          )}
         </div>
         <div style={{ float: "right" }}>
           <DollarOutlined style={{ marginRight: 5 }} />

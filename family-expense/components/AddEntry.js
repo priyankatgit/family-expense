@@ -13,9 +13,6 @@ const { Option } = Select;
 export default function AddEntry() {
   const { data: session } = useSession();
   const [categories, setCategories] = useState([]);
-  const [entryDetail, setEntryDetail] = useState("");
-  const [amount, setAmount] = useState(undefined);
-  const [categoryId, setCategoryId] = useState(undefined);
 
   const [form] = Form.useForm();
   const [, forceUpdate] = useState({});
@@ -35,12 +32,7 @@ export default function AddEntry() {
   }, []);
 
   const onSubmit = async (values) => {
-    console.log("Finish:", values);
-
-    if (!categoryId) {
-      alert("Select expense");
-      return;
-    }
+    let { category: categoryId, entryDetail, amount } = values;
 
     let entry = {
       entryDetail: entryDetail,
@@ -63,13 +55,15 @@ export default function AddEntry() {
       return;
     }
 
-    // Clear fields
-    setEntryDetail("");
-    setAmount("");
+    form.resetFields();
+  };
+
+  const initialData = {
+    createdAt: moment(new Date()),
   };
 
   return (
-    <Form form={form} onFinish={onSubmit}>
+    <Form form={form} onFinish={onSubmit} initialValues={initialData}>
       <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
         <Col span={12}>
           <Form.Item
@@ -123,14 +117,10 @@ export default function AddEntry() {
         </Col>
         <Col span={12}>
           <Form.Item
-            name=""
+            name="createdAt"
             rules={[{ required: true, message: "Please select date!" }]}
           >
-            <DatePicker
-              bordered={false}
-              defaultValue={moment(new Date(), "MMM Do")}
-              format={"MMM Do"}
-            />
+            <DatePicker bordered={false} format={"MMM Do"} />
           </Form.Item>
         </Col>
       </Row>
@@ -145,7 +135,7 @@ export default function AddEntry() {
                 type="primary"
                 htmlType="submit"
                 disabled={
-                  form.getFieldsError().filter(({ errors }) => errors.length)
+                  !!form.getFieldsError().filter(({ errors }) => errors.length)
                     .length
                 }
               ></Button>
@@ -154,28 +144,5 @@ export default function AddEntry() {
         </Col>
       </Row>
     </Form>
-    // <div>
-    //   <input
-    //     type="text"
-    //     placeholder="Entry detail"
-    //     value={entryDetail}
-    //     onChange={(e) => setEntryDetail(e.target.value)}
-    //   ></input>
-    //   <input
-    //     type="text"
-    //     placeholder="Amount"
-    //     value={amount}
-    //     onChange={(e) => setAmount(parseFloat(e.target.value))}
-    //   ></input>
-    //   <select onChange={(e) => setCategoryId(e.target.value)}>
-    //     <option></option>
-    //     {categories.map((category) => (
-    //       <option key={category._id} value={category._id}>
-    //         {category.name}
-    //       </option>
-    //     ))}
-    //   </select>
-    //   <button onClick={addEntry}>Add</button>
-    // </div>
   );
 }

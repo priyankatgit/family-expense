@@ -1,3 +1,4 @@
+import moment from "moment";
 import { ObjectId } from "mongodb";
 import nc from "next-connect";
 import dbConnect from "../../lib/mongodb";
@@ -21,6 +22,9 @@ async function getEntries(req, res) {
     // Make sure you close all cursors. Mongo server iss woeful to close connection automatically. Make sure to 1st store the response, then manually close the cursor on each end point.
     // https://github.com/vercel/next.js/discussions/12229#discussioncomment-363517
 
+    const selectedMonth = req.query['month']
+    const nextMonth = moment(selectedMonth).add(1, "months").format("YYYY-MM-DD")
+
     const entries = await Entry.aggregate([
       {
         $lookup: {
@@ -41,10 +45,19 @@ async function getEntries(req, res) {
       },
       { $unwind: "$user" },
       {
+        $match:{
+          createdAt:{
+              $gte: new Date(selectedMonth),
+              $lt: new Date(nextMonth)
+          }
+        }
+      },
+      {
         $project: {
           _id: 1,
           entryDetail: 1,
           amount: 1,
+          createdAt: 1,
           entryCategory: "$categories.name",
           entryCategoryType: "$categories.type",
           userDisplayName: "$user.name",
@@ -57,6 +70,7 @@ async function getEntries(req, res) {
       data: entries,
     });
   } catch (error) {
+    console.log(error)
     return res.json({
       error: new Error(error).message,
     });

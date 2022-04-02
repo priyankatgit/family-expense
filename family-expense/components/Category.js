@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
+import { Button, Col, Card, Form, Input, Row, Select, List, Tag } from "antd";
+import { CheckCircleFilled, DeleteOutlined } from "@ant-design/icons";
 
 export default function Category() {
-  const [categoryName, setCategoryName] = useState("");
-  const [categoryType, setCategoryType] = useState("expense");
   const [categories, setCategories] = useState([]);
-  const [monthlyReoccurs, setMonthlyReoccurs] = useState(false);
-  const [amount, setAmount] = useState(0);
+  const [form] = Form.useForm();
 
   const getCategories = async () => {
     const response = await fetch("/api/category");
@@ -21,13 +20,9 @@ export default function Category() {
     getCategories();
   }, []);
 
-  const addCategory = async () => {
-    let expense = {
-      name: categoryName,
-      type: categoryType,
-      monthlyReoccurs,
-      amount,
-    };
+  const onSubmit = async (values) => {
+
+    let expense = values
 
     // save the post
     let response = await fetch("/api/category", {
@@ -42,9 +37,8 @@ export default function Category() {
       return;
     }
 
+    form.resetFields();
     getCategories();
-    setCategoryName("");
-    setMonthlyReoccurs(false);
   };
 
   const deleteCategory = async (_id) => {
@@ -65,46 +59,74 @@ export default function Category() {
   };
 
   return (
-    <div>
-      <h4>Category</h4>
-      <input
-        type="text"
-        value={categoryName}
-        onChange={(e) => setCategoryName(e.target.value)}
-      ></input>
-      <select onChange={(e) => setCategoryType(e.target.value)}>
-        <option value="expense">Expense</option>
-        <option value="income">Income</option>
-      </select>
-      Monthly recurring?{" "}
-      <input
-        type="checkbox"
-        onChange={(e) => setMonthlyReoccurs(e.target.checked)}
-      />
-      {monthlyReoccurs && (
-        <input
-          type="text"
-          value={amount}
-          onChange={(e) => setAmount(e.target.value)}
-        ></input>
-      )}
-      <button onClick={addCategory}>Add Category</button>
-      <div style={{ margintTop: "10px" }}>
-        {categories.map((category) => {
-          return (
-            <div key={category._id}>
-              {category.name} - {category.type} - MonthlyReoccurs :
-              {category.monthlyReoccurs ? "Yes" : "No"}
-              <span
-                onClick={() => deleteCategory(category._id)}
-                style={{ paddingLeft: "10px", color: "lightpink" }}
+    <>
+      <Card title="Add new category">
+        <Form form={form} onFinish={onSubmit}>
+          <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
+            <Col span={12}>
+              <Form.Item
+                name="name"
+                rules={[{ required: true, message: "Please select category!" }]}
               >
-                Remove
-              </span>
-            </div>
-          );
-        })}
-      </div>
-    </div>
+                <Input placeholder="Enter category" />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                name="type"
+                rules={[{ required: true, message: "Please input amount!" }]}
+              >
+                <Select showSearch placeholder="Select type">
+                  <Option value="expense">Expense</Option>
+                  <Option value="income">Income</Option>
+                </Select>
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row>
+            <Col span={24} style={{ textAlign: "center" }}>
+              <Form.Item shouldUpdate>
+                {() => (
+                  <Button
+                    size="large"
+                    shape="circle"
+                    icon={<CheckCircleFilled />}
+                    type="primary"
+                    htmlType="submit"
+                    disabled={
+                      !!form
+                        .getFieldsError()
+                        .filter(({ errors }) => errors.length).length
+                    }
+                  ></Button>
+                )}
+              </Form.Item>
+            </Col>
+          </Row>
+        </Form>
+      </Card>
+
+      <Card style={{ marginTop: 10 }} title="Categories">
+        <List
+          size="small"
+          itemLayout="horizontal"
+          dataSource={categories}
+          renderItem={(category) => (
+            <List.Item
+              actions={[
+                category.type == "expense" ? (
+                  <Tag color="magenta">Expense</Tag>
+                ) : (
+                  <Tag color="green">Income</Tag>
+                ),
+                <DeleteOutlined />,
+              ]}
+            >
+              <List.Item.Meta title={category.name} />
+            </List.Item>
+          )}
+        />
+      </Card>
+    </>
   );
 }

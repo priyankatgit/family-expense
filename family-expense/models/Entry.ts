@@ -9,9 +9,7 @@ interface ICategory{
   type: string,
   monthlyReoccurs: boolean,
   amount?: number,
-  createdAt: Date,
-  childCategories: ID[] | ICategoryDoc[],
-  parentCategory: ID | ICategoryDoc,
+  createdAt: Date
 }
 
 interface ICategoryDoc extends ICategory, Document {}
@@ -28,6 +26,7 @@ const categorySchemaFields:Record<keyof ICategory, any> = {
   },
   monthlyReoccurs: {
     type: Boolean,
+    default: false
   },
   amount: {
     type: Number,
@@ -35,14 +34,6 @@ const categorySchemaFields:Record<keyof ICategory, any> = {
   createdAt: {
     type: Date,
     default: new Date(),
-  },
-  childCategories: [{
-      type: Schema.Types.ObjectId,
-      ref: 'Category',
-  }],
-  parentCategory: {
-      type: Schema.Types.ObjectId,
-      ref: 'Category',
   }
 }
 
@@ -57,8 +48,7 @@ const entrySchema = new Schema({
     required: [true, "You forget to provide category!"],
   },
   amount: {
-    type: Number,
-    required: [true, "You forget to provide amount!"],
+    type: Number
   },
   userId: {
     type: ObjectId,

@@ -14,13 +14,12 @@ const { Content } = Layout;
 const AppLayout = (props) => {
   const { data: session } = useSession();
   const user = session?.user || {};
-  let { title } = props;
+  let { title, onChangeMonth, page } = props;
 
   let [leftDrawerVisible, setLeftDrawerVisible] = useState(false);
 
   let onNavigationClick = null;
   const navigationIcon = () => {
-    let { page } = props;
 
     if (page == "home") {
       onNavigationClick = () => setLeftDrawerVisible(true);
@@ -38,12 +37,17 @@ const AppLayout = (props) => {
         backIcon={navigationIcon()}
         onBack={onNavigationClick}
         extra={[
-          <DatePicker
-            key="1"
-            picker="month"
-            defaultValue={moment(new Date(), "MMM, YYYY")}
-            format={"MMM, YYYY"}
-          />,
+          page == "home" && (
+            <DatePicker
+              key="1"
+              picker="month"
+              defaultValue={moment(new Date(), "MMM, YYYY")}
+              format={"MMM, YYYY"}
+              onChange={(value) =>
+                onChangeMonth(moment(value).format("YYYY-MM-DD"))
+              }
+            />
+          ),
         ]}
       />
 
