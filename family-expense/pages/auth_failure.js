@@ -13,7 +13,7 @@ import { useRouter } from "next/router";
 //   default: "Unable to sign in.",
 // };
 
-export default function failure() {
+export default function Failure() {
   const router = useRouter();
   const errorMessage = router.query.error; // && (errors[router.query.failure] ?? errors.default);
   return <>{errorMessage}</>;

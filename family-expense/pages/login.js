@@ -2,7 +2,7 @@ import { getProviders, signIn } from "next-auth/react";
 import React, { useEffect } from "react";
 import styles from "../styles/login.module.css";
 
-export default function login({ providers }) {
+export default function Login({ providers }) {
   useEffect(() => {
     document.title = "Family Expense - Login";
   }, []);

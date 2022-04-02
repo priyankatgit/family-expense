@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { Button, Col, Card, Form, Input, Row, Select, List, Tag } from "antd";
 import { CheckCircleFilled, DeleteOutlined } from "@ant-design/icons";
 
+const { Option } = Select;
+
 export default function Category() {
   const [categories, setCategories] = useState([]);
   const [form] = Form.useForm();
@@ -21,8 +23,7 @@ export default function Category() {
   }, []);
 
   const onSubmit = async (values) => {
-
-    let expense = values
+    let expense = values;
 
     // save the post
     let response = await fetch("/api/category", {
@@ -77,8 +78,12 @@ export default function Category() {
                 rules={[{ required: true, message: "Please input amount!" }]}
               >
                 <Select showSearch placeholder="Select type">
-                  <Option value="expense">Expense</Option>
-                  <Option value="income">Income</Option>
+                  <Option value="expense">
+                    Expense
+                  </Option>
+                  <Option value="income">
+                    Income
+                  </Option>
                 </Select>
               </Form.Item>
             </Col>
@@ -115,11 +120,15 @@ export default function Category() {
             <List.Item
               actions={[
                 category.type == "expense" ? (
-                  <Tag color="magenta">Expense</Tag>
+                  <Tag key={1} color="magenta">
+                    Expense
+                  </Tag>
                 ) : (
-                  <Tag color="green">Income</Tag>
+                  <Tag key={2} color="green">
+                    Income
+                  </Tag>
                 ),
-                <DeleteOutlined />,
+                <DeleteOutlined key={3} />,
               ]}
             >
               <List.Item.Meta title={category.name} />
