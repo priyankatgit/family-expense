@@ -3,12 +3,12 @@ import { useEffect, useState } from "react";
 
 const { Title } = Typography;
 
-export default function BalanceCount({ selectedMonth }) {
+export default function BalanceCount({ selectedMonth, invalidateReload }) {
   const [balance, setBalance] = useState({});
 
   useEffect(() => {
     getBalace();
-  }, [selectedMonth]);
+  }, [selectedMonth, invalidateReload]);
 
   const getBalace = async () => {
     const response = await fetch(`/api/balance/?month=${selectedMonth}`);

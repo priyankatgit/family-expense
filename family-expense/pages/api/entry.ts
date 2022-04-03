@@ -3,6 +3,8 @@ import { ObjectId } from "mongodb";
 import nc from "next-connect";
 import dbConnect from "../../lib/mongodb";
 import { Entry } from "../../models/Entry";
+import {getSession} from 'next-auth/react'
+import { IUser } from "./auth/[...nextauth]";
 
 const handler = nc()
   .get((req, res) => {
@@ -17,6 +19,9 @@ const handler = nc()
 
 async function getEntries(req, res) {
   try {
+    const session = await getSession({ req });
+    const sessionUser = session?.user as IUser
+
     await dbConnect();
     // TODO: Check what happens if in case of ORM like Prisma or Mongoose. Are those library handles connection closing in better way?
     // Make sure you close all cursors. Mongo server iss woeful to close connection automatically. Make sure to 1st store the response, then manually close the cursor on each end point.
@@ -24,7 +29,6 @@ async function getEntries(req, res) {
 
     const selectedMonth = req.query['month']
     const nextMonth = moment(selectedMonth).add(1, "months").format("YYYY-MM-DD")
-
     const entries = await Entry.aggregate([
       {
         $lookup: {
@@ -46,6 +50,9 @@ async function getEntries(req, res) {
       { $unwind: "$user" },
       {
         $match:{
+          userId:{
+            $eq: new ObjectId(sessionUser.userId)
+        },
           createdAt:{
               $gte: new Date(selectedMonth),
               $lt: new Date(nextMonth)

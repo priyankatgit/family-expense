@@ -1,8 +1,10 @@
 import { ObjectId } from "mongodb";
 import { NextApiRequest, NextApiResponse } from "next";
+import {IUser} from "./auth/[...nextauth]"
 import nc from "next-connect";
 import dbConnect from "../../lib/mongodb";
 import { Category } from "../../models/Entry";
+import {getSession} from 'next-auth/react'
 
 const handler = nc<NextApiRequest, NextApiResponse>()
   .get((req, res) => {
@@ -17,8 +19,11 @@ const handler = nc<NextApiRequest, NextApiResponse>()
 
 async function getCategories(req:NextApiRequest, res:NextApiResponse) {
   try {
+    const session = await getSession({ req });
+    const sessionUser = session?.user as IUser
+
     await dbConnect();
-    const categories = await Category.find().sort({ _id: -1 });
+    const categories = await Category.find({userId: new ObjectId(sessionUser.userId)}).sort({ _id: -1 });
 
     return res.json({
       data: categories,

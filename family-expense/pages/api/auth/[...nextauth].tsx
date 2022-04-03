@@ -4,6 +4,10 @@ import NextAuth, { NextAuthOptions, User } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import { User as UserMD } from "../../../lib/users";
 
+export interface IUser extends User {
+  userId:string
+}
+
 const createOptions = (req:NextApiRequest):NextAuthOptions => ({
   secret: process.env.SECRET,
   providers: [

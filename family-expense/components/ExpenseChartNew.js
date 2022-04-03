@@ -8,14 +8,14 @@ import interpolateColors from "../utils/color-generator";
 
 ChartJS.register(ArcElement, Tooltip, Legend, ChartDataLabels);
 
-export default function ExpenseChartNew({ selectedMonth }) {
+export default function ExpenseChartNew({ selectedMonth, invalidateReload }) {
   const [chartData, setChartData] = useState([]);
   const [chartLabels, setChartLabels] = useState([]);
   const [chartColors, setChartColors] = useState([]);
 
   useEffect(() => {
     getExpenses();
-  }, [selectedMonth]);
+  }, [selectedMonth, invalidateReload]);
 
   const getExpenses = async () => {
     const response = await fetch(`/api/analysis/?month=${selectedMonth}`);
@@ -56,7 +56,7 @@ export default function ExpenseChartNew({ selectedMonth }) {
           borderColor: chartColors,
           borderWidth: 1,
         },
-      ]
+      ],
     };
     const options = {
       responsive: true,

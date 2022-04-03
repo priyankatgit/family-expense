@@ -2,6 +2,9 @@ import moment from "moment";
 import nc from "next-connect";
 import dbConnect from "../../lib/mongodb";
 import { Entry } from "../../models/Entry";
+import {getSession} from 'next-auth/react'
+import { ObjectId } from "mongodb";
+import { IUser } from "./auth/[...nextauth]";
 
 const handler = nc()
   .get((req, res) => {
@@ -10,6 +13,9 @@ const handler = nc()
 
 async function getBalance(req, res) {
   try {
+    const session = await getSession({ req });
+    const sessionUser = session?.user as IUser
+
     await dbConnect();
 
     const selectedMonth = req.query['month']
@@ -27,6 +33,9 @@ async function getBalance(req, res) {
       { $unwind: "$categories" },
       {
         $match:{
+          userId:{
+            $eq: new ObjectId(sessionUser.userId)
+          },
           createdAt:{
               $gte: new Date(selectedMonth),
               $lt: new Date(nextMonth)

@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
 
 const { Option } = Select;
 
-export default function AddEntry() {
+export default function AddEntry({refreshBalanceAndChart}) {
   const { data: session } = useSession();
   const [categories, setCategories] = useState([]);
 
@@ -32,29 +32,27 @@ export default function AddEntry() {
   }, []);
 
   const onSubmit = async (values) => {
-    let { category: categoryId, entryDetail, amount } = values;
+    const { category: categoryId, entryDetail, amount } = values;
 
-    let entry = {
+    const entry = {
       entryDetail: entryDetail,
       categoryId,
       amount,
       userId: session.user.userId,
     };
 
-    // save the post
-    let response = await fetch("/api/entry", {
+    const response = await fetch("/api/entry", {
       method: "POST",
       body: JSON.stringify(entry),
     });
-
-    // get the data
-    let data = await response.json();
+    const data = await response.json();
 
     if (data.error) {
       alert(data.error);
       return;
     }
 
+    refreshBalanceAndChart(data.id);
     form.resetFields();
   };
 

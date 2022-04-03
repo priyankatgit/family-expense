@@ -9,6 +9,7 @@ interface ICategory{
   type: string,
   monthlyReoccurs: boolean,
   amount?: number,
+  userId: ID,
   createdAt: Date
 }
 
@@ -30,6 +31,9 @@ const categorySchemaFields:Record<keyof ICategory, any> = {
   },
   amount: {
     type: Number,
+  },
+  userId: {
+    type: ObjectId,
   },
   createdAt: {
     type: Date,

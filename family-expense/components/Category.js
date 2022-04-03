@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { Button, Col, Card, Form, Input, Row, Select, List, Tag } from "antd";
 import { CheckCircleFilled, DeleteOutlined } from "@ant-design/icons";
+import { useSession } from "next-auth/react";
 
 const { Option } = Select;
 
 export default function Category() {
+  const { data: session } = useSession();
   const [categories, setCategories] = useState([]);
   const [form] = Form.useForm();
 
@@ -23,15 +25,13 @@ export default function Category() {
   }, []);
 
   const onSubmit = async (values) => {
-    let expense = values;
-
-    // save the post
+    const categoryData = {...{userId:session.user.userId}, ...values};
+    
     let response = await fetch("/api/category", {
       method: "POST",
-      body: JSON.stringify(expense),
+      body: JSON.stringify(categoryData),
     });
-
-    // get the data
+    
     let data = await response.json();
     if (data.error) {
       alert(data.error);

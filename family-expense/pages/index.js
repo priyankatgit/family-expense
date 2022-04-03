@@ -16,9 +16,15 @@ export default function Home() {
     moment(new Date()).format("YYYY-MM-DD")
   );
 
+  const [invalidateReload, setInvalidateReload] = useState("");
+
   const handleChangeMonth = (value) => {
     setSelectedMonth(value);
   };
+
+  const refreshBalanceAndChart = (id) => {
+    setInvalidateReload(id)
+  }
 
   const tabList = [
     {
@@ -37,13 +43,13 @@ export default function Home() {
   };
 
   const tabContentList = {
-    tabEntry: <AddEntry></AddEntry>,
+    tabEntry: <AddEntry refreshBalanceAndChart={refreshBalanceAndChart}></AddEntry>,
     tabEntryList: <ListEntry selectedMonth={selectedMonth}></ListEntry>,
   };
 
   return (
     <AppLayout page="home" title="Home" onChangeMonth={handleChangeMonth}>
-      <BalanceCount selectedMonth={selectedMonth}></BalanceCount>
+      <BalanceCount selectedMonth={selectedMonth} invalidateReload={invalidateReload} ></BalanceCount>
 
       <Card
         style={{ marginTop: 10 }}
@@ -56,12 +62,9 @@ export default function Home() {
         {tabContentList[activeTabKey]}
       </Card>
 
-      {/* <ExpenseChart
-        selectedMonth={selectedMonth}
-        style={{ marginTop: 10 }}
-      ></ExpenseChart> */}
       <ExpenseChartNew
         selectedMonth={selectedMonth}
+        invalidateReload={invalidateReload}
         style={{ marginTop: 10 }}
       ></ExpenseChartNew>
     </AppLayout>
