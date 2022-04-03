@@ -3,7 +3,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import {IUser} from "./auth/[...nextauth]"
 import nc from "next-connect";
 import dbConnect from "../../lib/mongodb";
-import { Category } from "../../models/Entry";
+import { Category, Entry } from "../../models/Entry";
 import {getSession} from 'next-auth/react'
 
 const handler = nc<NextApiRequest, NextApiResponse>()
@@ -53,11 +53,17 @@ async function addCategory(req:NextApiRequest, res:NextApiResponse) {
 
 async function deleteCategory(req:NextApiRequest, res:NextApiResponse) {
   try {
-    await dbConnect();
-
     const reqData = JSON.parse(req.body);
+    const categoryId = new ObjectId(reqData["_id"])
+
+    await dbConnect();
+    const referencedCount = await Entry.count({categoryId: categoryId})
+    if(referencedCount > 0) {
+      return res.json({error: "Cannot be deleted. It is been used in Entries."})
+    }
+
     await Category.findOneAndRemove({
-      _id: new ObjectId(reqData["_id"]),
+      _id: categoryId,
     });
 
     return res.json({});

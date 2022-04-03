@@ -5,6 +5,7 @@ import dbConnect from "../../lib/mongodb";
 import { Entry } from "../../models/Entry";
 import {getSession} from 'next-auth/react'
 import { IUser } from "./auth/[...nextauth]";
+import next from "next";
 
 const handler = nc()
   .get((req, res) => {
@@ -29,6 +30,7 @@ async function getEntries(req, res) {
 
     const selectedMonth = req.query['month']
     const nextMonth = moment(selectedMonth).add(1, "months").format("YYYY-MM-DD")
+    console.log(selectedMonth, nextMonth)
     const entries = await Entry.aggregate([
       {
         $lookup: {

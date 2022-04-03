@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button, Col, Card, Form, Input, Row, Select, List, Tag } from "antd";
+import { Button, Col, Card, Form, Input, Row, Select, List, Tag, message } from "antd";
 import { CheckCircleFilled, DeleteOutlined } from "@ant-design/icons";
 import { useSession } from "next-auth/react";
 
@@ -34,7 +34,7 @@ export default function Category() {
     
     let data = await response.json();
     if (data.error) {
-      alert(data.error);
+      message.error(data.error);
       return;
     }
 
@@ -52,7 +52,7 @@ export default function Category() {
     let data = await response.json();
 
     if (data.error) {
-      alert(data.error);
+      message.error(data.error);
       return;
     }
 
@@ -124,11 +124,11 @@ export default function Category() {
                     Expense
                   </Tag>
                 ) : (
-                  <Tag key={2} color="green">
+                  <Tag key={1} color="green">
                     Income
                   </Tag>
                 ),
-                <DeleteOutlined key={3} />,
+                <DeleteOutlined key={3} onClick={() => deleteCategory(category._id)}/>,
               ]}
             >
               <List.Item.Meta title={category.name} />

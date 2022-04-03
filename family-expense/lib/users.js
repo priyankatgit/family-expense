@@ -3,16 +3,19 @@ import { User as UserModel } from "../models/Entry"; //TODO: Resolve User class 
 
 class User {
   async createUserIfNotExist(data) {
-    await dbConnect();
-
-    let user = await UserModel.findOne({ email: data.email });
-    console.log("user", user);
-    if (user) {
-      return String(user._id);
+    try {
+      await dbConnect();
+  
+      let user = await UserModel.findOne({ email: data.email });
+      if (user) {
+        return String(user._id);
+      }
+  
+      user = await UserModel.create(data);
+      return user._id;
+    } catch (error) {
+      throw error
     }
-
-    user = await UserModel.create(data);
-    return user._id;
   }
 }
 

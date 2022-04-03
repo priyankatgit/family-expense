@@ -17,7 +17,7 @@ export default function Login({ providers }) {
       }}
     >
       <div style={{ textAlign: "center" }}>
-        <img alt="FE" src="/logo.png" height={82} preview></img>
+        <img alt="FE" src="/logo.png" height={82}></img>
       </div>
 
       <div style={{ marginTop: "30px" }}>

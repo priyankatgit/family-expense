@@ -71,7 +71,7 @@ const userSchema = new Schema({
     type: String,
   },
   image: {
-    type: Number,
+    type: String,
   },
   createdAt: {
     type: Date,
